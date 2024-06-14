@@ -57,6 +57,7 @@ impl fmt::Display for TokenMode {
 pub struct Message {
     pub recipient: HexBinary,
     pub amount: Uint256,
+    pub chain_id: u16,
     pub metadata: HexBinary,
 }
 
@@ -77,7 +78,8 @@ impl From<HexBinary> for Message {
         Self {
             recipient: v[0..32].to_vec().into(),
             amount: Uint256::from_be_bytes(v[32..64].try_into().unwrap()),
-            metadata: v[64..].to_vec().into(),
+            chain_id: u16::from_be_bytes(v[64..66].try_into().unwrap()),
+            metadata: v[66..].to_vec().into(),
         }
     }
 }

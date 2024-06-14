@@ -58,6 +58,7 @@ pub enum ExecuteMsg {
         dest_domain: u32,
         recipient: HexBinary,
         amount: Uint128,
+        chain_id: u16,
         hook: Option<String>,
         metadata: Option<HexBinary>,
     },

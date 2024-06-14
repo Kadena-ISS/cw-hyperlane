@@ -103,6 +103,7 @@ pub fn execute(
             dest_domain,
             recipient,
             amount,
+            chain_id,
             hook,
             metadata,
         } => transfer_remote(
@@ -112,6 +113,7 @@ pub fn execute(
             dest_domain,
             recipient,
             amount,
+            chain_id,
             hook,
             metadata,
         ),
@@ -202,6 +204,7 @@ fn transfer_remote(
     dest_domain: u32,
     recipient: HexBinary,
     transfer_amount: Uint128,
+    chain_id: u16,
     hook: Option<String>,
     metadata: Option<HexBinary>,
 ) -> Result<Response, ContractError> {
@@ -242,6 +245,7 @@ fn transfer_remote(
     let dispatch_payload = warp::Message {
         recipient: recipient.clone(),
         amount: Uint256::from_uint128(transfer_amount),
+        chain_id,
         metadata: HexBinary::default(),
     };
 
@@ -262,6 +266,7 @@ fn transfer_remote(
             .add_attribute("recipient", recipient.to_hex())
             .add_attribute("token", token)
             .add_attribute("amount", transfer_amount.to_string())
+            .add_attribute("chain_id", chain_id.to_string())
             .add_attribute("hook", hook.unwrap_or_default())
             .add_attribute("metadata", metadata.unwrap_or_default().to_string()),
     ))
@@ -486,6 +491,7 @@ mod test {
             body: warp::Message {
                 recipient: recipient.clone(),
                 amount: Uint256::from_u128(100),
+                chain_id: 0,
                 metadata: HexBinary::default(),
             }
             .into(),
@@ -565,6 +571,7 @@ mod test {
                 dest_domain,
                 recipient: dest_recipient.clone(),
                 amount: Uint128::new(50),
+                chain_id: 0,
                 hook: custom_hook.map(|h| h.to_string()),
                 metadata: custom_metadata.clone(),
             },
@@ -583,6 +590,7 @@ mod test {
                 warp::Message {
                     recipient: dest_recipient,
                     amount: Uint256::from_u128(50),
+                    chain_id: 0,
                     metadata: HexBinary::default(),
                 }
                 .into(),
